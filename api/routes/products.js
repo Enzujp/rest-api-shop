@@ -9,8 +9,16 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
+    // create a product
+    const product = {
+        name : req.body.name, // should be passed in the frontend, would be stated in documentation
+        price : req.body.price
+    }
+    
+
     res.status(201).json({
-        message: "Sending POST requests to /products"
+        message : "Sending POST requests to /products",
+        createdProduct : product
     })
 })
 

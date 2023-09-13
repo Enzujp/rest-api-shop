@@ -11,8 +11,15 @@ router.get('/', (req, res, next) => {
 
 
 router.post('/', (req, res, next) => {
+    const order = {
+        productId: req.body.productId,
+        orderQuantity : req.body.orderQuantity
+        
+    }
+
     res.status(201).json({
-        message: "Your orders have been received!"
+        message: "Your orders have been received!",
+        productOrder : order
     })
 })
 

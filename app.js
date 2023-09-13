@@ -11,7 +11,8 @@ const bodyParser = require("body-parser");
 
 
 // Middleware
-app.use(express.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json({ "limit": "10mb" }));
 app.use(morgan('dev'));
 
 // request handling routes
