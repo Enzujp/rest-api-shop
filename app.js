@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
+const cors = require("cors");   
 
 const productRoutes = require("./api/routes/products");
 const orderRoutes = require("./api/routes/orders");
@@ -11,13 +12,21 @@ const bodyParser = require("body-parser");
 
 
 // Middleware
+app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json({ "limit": "10mb" }));
 app.use(morgan('dev'));
 
+
 // request handling routes
 app.use('/products', productRoutes); 
 app.use('/orders', orderRoutes);
+
+
+// database connection
+const dbURI = "mongodb+srv://gem:jesse@cluster0.f3cqsmn.mongodb.net/";
+mongoose.connect(dbURI, {useNewUrlParser: true, useUnifiedTopology: true });
+
 
 
 // error handler
@@ -37,6 +46,7 @@ app.use((error, req, res, next) => {
         }
     })
 })
+
 
 
 // listen for server
