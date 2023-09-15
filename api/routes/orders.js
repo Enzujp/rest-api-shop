@@ -6,7 +6,7 @@ const Order = require("../../src/models/order");
 const Product = require("../../src/models/product");
 
 // incoming GET results for orders
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
     Order.find()
     .select("quantity product _id")
     .exec()
@@ -49,6 +49,7 @@ router.post('/', (req, res) => {
                         orderedProduct: result.product,
                         orderName: result.name,
                         orderQuantity: result.quantity,
+                        // orderPrice: result.price, // check to confirm that the price attr is included
                         request: {
                             requestType: 'POST',
                             url: "http://localhost:7000/" + result._id
@@ -68,19 +69,48 @@ router.post('/', (req, res) => {
 
 
 // for specific orders
-router.get('/:orderId', (req, res, next) => {
-    const order = req.params.orderId;
-    res.status(200).json({
-        message: "Here is your order",
-        order: order
+router.get('/:orderId', (req, res) => {
+    // find order with specific orderId
+    Order.findById(req.params.orderId)
+    .select("_id product quantity")
+    .exec()
+    .then(order => {
+        res.status(201).json({
+            orderDetails: {
+                orderId: order._id,
+                productOrderedId: order.product,
+                orderQuantity: order.quantity,
+                request: {
+                    requestType: 'GET',
+                    url: "http://localhost:7000/orders/" 
+                }
+            }
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            error: err,
+            message: "Internal Server Error"
+        })
     })
 })
 
-router.delete('/:orderId', (req, res, next) => {
-    const order = req.params.orderId;
-    res.status(200).json({
-        message: "This order has been deleted",
-        order: order
+router.delete('/:orderId', (req, res) => {
+    Order.remove({ _id: req.params.orderId })
+    .exec()
+    .then(result => {
+        res.status(200).json({
+            message: "This Order has been deleted",
+            request: {
+                requestType: 'POST',
+                url: "http://localhost:7000/orders"
+            }
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            error: err
+        })
     })
 })
 
