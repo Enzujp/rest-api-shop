@@ -3,7 +3,7 @@ const mongoose = require("mongoose"); // to initialize id
 const router = express.Router();
 
 const Order = require("../../src/models/order");
-
+const Product = require("../../src/models/product");
 
 // incoming GET results for orders
 router.get('/', (req, res, next) => {
@@ -11,55 +11,58 @@ router.get('/', (req, res, next) => {
     .select("quantity product _id")
     .exec()
     .then(docs => {
-        const objectResponse = {
-            count: docs.count,
-            orders: docs.map(doc=> {
-                return{
-                    orderQuantity: doc.quantity,
-                    product: doc.product, // check this line
-                    orderId: doc._id,
-                    request: {
-                        requestType: 'GET',
-                        url: "http://localhost:7000/orders"
-                    }
-                };
-                
-        
-            })
-        };
-        res.status(200).json({objectResponse});
+       res.status(200).json({
+        count: docs.length,
+        orders: docs.map(doc => {
+            return{
+                quantity: doc.quantity,
+                _id: doc._id,
+                productId: doc.product
+            }
+        }),
+        requestType: 'GET',
+        url: "http://localhost:7000/orders" 
+       })
     })
 })
 
 
-router.post('/', (req, res, next) => {
-    const order = new Order({
-        _id: new mongoose.Types.ObjectId(),
-        product: req.body.productId,
-        quantity: req.body.quantity
-    });
-    order.save()
-    .then(result => {
-        res.status(201).json({
-            message: "Your order has been successfully placed",
-            orderDetails: {
-                orderId: result._id,
-                orderName: result.name,
-                orderQuantity: result.quantity,
-                request: {
-                    requestType: 'POST',
-                    url: "http://localhost:7000/" + result._id
-                }
-            }
+router.post('/', (req, res) => {
+    Product.findById(req.body.productId) // check to ensure product is available
+        .then(product =>  {
+            if (!product) {
+                return res.status(404).json({
+                    message: "This Product wasn't found"
+                });
+            } 
+            const order = new Order({
+                _id: new mongoose.Types.ObjectId(),
+                product: req.body.productId,
+                quantity: req.body.quantity
+            })
+            order.save()
+            .then(result => {
+                res.status(201).json({
+                    message: "Your order has been successfully placed",
+                    orderDetails: {
+                        orderId: result._id,
+                        orderedProduct: result.product,
+                        orderName: result.name,
+                        orderQuantity: result.quantity,
+                        request: {
+                            requestType: 'POST',
+                            url: "http://localhost:7000/" + result._id
+                        }
+                    }
+                })
+            })
         })
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(500).json({
-            errorMessage: err,
-            errorText: "find me please"
+        .catch(err => {
+            res.status(500).json({
+                error: err,
+                message: "Product not found "
+            })
         })
-    })
         
     })
 
