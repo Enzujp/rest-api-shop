@@ -15,6 +15,7 @@ const bodyParser = require("body-parser");
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json({ "limit": "10mb" }));
+app.use('/uploads', express.static('uploads')); //make available
 app.use(morgan('dev'));
 
 

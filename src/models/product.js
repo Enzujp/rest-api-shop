@@ -10,6 +10,10 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true,
         
+    },
+    productImage: {
+        type: String, // since it's accepting a url
+        required: true
     }
 });
 

@@ -1,14 +1,17 @@
 const express = require("express");
 const mongoose = require("mongoose"); // to initialize id
 const router = express.Router();
+const multer = require("multer")
 
 const Order = require("../../src/models/order");
 const Product = require("../../src/models/product");
+const order = require("../../src/models/order");
 
 // incoming GET results for orders
 router.get('/', (req, res) => {
     Order.find()
-    .select("quantity product _id")
+    .select("quantity product _id productImage")
+    .populate('product') // get more details than just an _id. accepts a second argument for specificity
     .exec()
     .then(docs => {
        res.status(200).json({
@@ -73,12 +76,13 @@ router.get('/:orderId', (req, res) => {
     // find order with specific orderId
     Order.findById(req.params.orderId)
     .select("_id product quantity")
+    .populate('product')
     .exec()
     .then(order => {
         res.status(201).json({
             orderDetails: {
                 orderId: order._id,
-                productOrderedId: order.product,
+                productOrdered: order.product,
                 orderQuantity: order.quantity,
                 request: {
                     requestType: 'GET',
@@ -98,12 +102,21 @@ router.get('/:orderId', (req, res) => {
 router.delete('/:orderId', (req, res) => {
     Order.remove({ _id: req.params.orderId })
     .exec()
-    .then(result => {
+    .then(order => {
+        if (!order) {
+            res.status(400).json({
+                message: "Page not found"
+            })
+        }
         res.status(200).json({
             message: "This Order has been deleted",
             request: {
                 requestType: 'POST',
-                url: "http://localhost:7000/orders"
+                url: "http://localhost:7000/orders",
+                body: {
+                    "productId": "ID",
+                    "quantity": "Number"
+                }
             }
         })
     })

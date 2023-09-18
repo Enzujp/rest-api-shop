@@ -1,12 +1,36 @@
 const express = require("express");
-const router = express.Router();
 const mongoose = require("mongoose");
+const router = express.Router();
+const multer = require("multer");
+const storage = multer.diskStorage({ // takes two arguments
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + new Date().toISOString() );
+    }
+})
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true)
+    } else {
+        cb(fileError({
+            message: "Only takes in images in jpg and png formats"
+        }), false)
+    }
+}
+
+const upload = multer({ storage: storage, fileFilter: fileFilter }); //initialize multer and choose storage file
+
+
 const Product = require("../../src/models/product");
+
 
 
 router.get('/', (req, res, next) => {
     Product.find()// to display all products
-    .select("_id name price") // specify items to be displayed
+    .select("_id name price productImage") // specify items to be displayed
     .exec() // exec doesnt work when .save() is called
     .then(docs => {
         // return a response displaying required properties
@@ -38,12 +62,14 @@ router.get('/', (req, res, next) => {
     })
 })
 
-router.post('/', (req, res, next) => {
-    // create a product
+// create a product
+router.post('/', upload.single('productImage'), (req, res, next) => {
+    // req.file available due to multer
     const product = new Product({
         _id: new mongoose.Types.ObjectId(), // create new unique id
         name: req.body.name,
-        price: req.body.price
+        price: req.body.price,
+        product: req.file.path
     });
     product.save()
     .then(result => {
@@ -74,7 +100,7 @@ router.post('/', (req, res, next) => {
 router.get('/:productId', (req, res, next) => {
     const id = req.params.productId;
     Product.findById(id)
-    .select("_id name price")
+    .select("_id name price productImage")
     .exec()
     .then( doc=> {
         console.log("fetched from database", doc);
@@ -82,6 +108,7 @@ router.get('/:productId', (req, res, next) => {
             const objectResponse = {
                 name: doc.name,
                 price: doc.price,
+                productImage: doc.productImage,
                 id: doc._id,
                 request: {
                     requestType: 'GET',
