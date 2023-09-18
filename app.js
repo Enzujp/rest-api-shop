@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const productRoutes = require("./api/routes/products");
 const orderRoutes = require("./api/routes/orders");
+const userRoutes = require("./api/routes/userRoutes")
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(morgan('dev'));
 // request handling routes
 app.use('/products', productRoutes); 
 app.use('/orders', orderRoutes);
+app.use('/user', userRoutes);
 
 
 // database connection

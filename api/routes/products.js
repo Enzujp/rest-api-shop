@@ -69,7 +69,7 @@ router.post('/', upload.single('productImage'), (req, res, next) => {
         _id: new mongoose.Types.ObjectId(), // create new unique id
         name: req.body.name,
         price: req.body.price,
-        product: req.file.path
+        productImage: req.file.path
     });
     product.save()
     .then(result => {
@@ -79,6 +79,7 @@ router.post('/', upload.single('productImage'), (req, res, next) => {
         createdProduct : {
             name: result.name,
             price: result.price,
+            productImage: result.productImage,
             id : result._id,    
             request: {
                 requestType: 'POST',
