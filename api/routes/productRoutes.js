@@ -2,6 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const multer = require("multer");
+const checkAuth = require("../../middlewares/check-auth");
+const Product = require("../../src/models/product");
+
 const storage = multer.diskStorage({ // takes two arguments
     destination: function (req, file, cb) {
         cb(null, './uploads/');
@@ -10,6 +13,7 @@ const storage = multer.diskStorage({ // takes two arguments
         cb(null, file.fieldname + '-' + new Date().toISOString() );
     }
 })
+
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
@@ -24,7 +28,8 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter }); //initialize multer and choose storage file
 
 
-const Product = require("../../src/models/product");
+
+
 
 
 
@@ -63,7 +68,8 @@ router.get('/', (req, res, next) => {
 })
 
 // create a product
-router.post('/', upload.single('productImage'), (req, res, next) => {
+// ensure user is verified with token
+router.post('/', checkAuth, upload.single('productImage'), (req, res, next) => {
     // req.file available due to multer
     const product = new Product({
         _id: new mongoose.Types.ObjectId(), // create new unique id
@@ -188,7 +194,6 @@ router.delete('/:productId', (req, res, next) => {
         })
      });
 })
-
 
 
 

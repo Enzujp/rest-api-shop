@@ -1,20 +1,13 @@
-const express = require("express");
-const mongoose = require("mongoose"); // to initialize id
-const router = express.Router();
-const multer = require("multer")
+const Order = require("../src/models/orderRoutes");
 
-const Order = require("../../src/models/order");
-const Product = require("../../src/models/product");
-const order = require("../../src/models/order");
 
-// incoming GET results for orders
-router.get('/', (req, res) => {
+module.exports.all_orders_get = (req, res) =>{
     Order.find()
     .select("quantity product _id productImage")
     .populate('product') // get more details than just an _id. accepts a second argument for specificity
     .exec()
     .then(docs => {
-       res.status(200).json({
+    res.status(200).json({
         count: docs.length,
         orders: docs.map(doc => {
             return{
@@ -25,12 +18,11 @@ router.get('/', (req, res) => {
         }),
         requestType: 'GET',
         url: "http://localhost:7000/orders" 
-       })
     })
 })
+}
 
-
-router.post('/', (req, res) => {
+module.exports.create_order_post = (req, res) => {
     Product.findById(req.body.productId) // check to ensure product is available
         .then(product =>  {
             if (!product) {
@@ -67,13 +59,9 @@ router.post('/', (req, res) => {
                 message: "Product not found "
             })
         })
-        
-    })
+}
 
-
-// for specific orders
-router.get('/:orderId', (req, res) => {
-    // find order with specific orderId
+module.exports.find_specific_order_get = (req, res) => {
     Order.findById(req.params.orderId)
     .select("_id product quantity")
     .populate('product')
@@ -97,9 +85,10 @@ router.get('/:orderId', (req, res) => {
             message: "Internal Server Error"
         })
     })
-})
+}
 
-router.delete('/:orderId', (req, res) => {
+
+module.exports.delete_order = (req, res) => {
     Order.remove({ _id: req.params.orderId })
     .exec()
     .then(order => {
@@ -125,6 +114,4 @@ router.delete('/:orderId', (req, res) => {
             error: err
         })
     })
-})
-
-module.exports = router;
+}

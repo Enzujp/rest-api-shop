@@ -1,1 +1,7 @@
 Create an object response in a file and call it accordingly, instead of repeating 
+
+Try to create as many functions as possible to clean up your routes. 
+
+Make the necessary installations
+
+Practice middleware
