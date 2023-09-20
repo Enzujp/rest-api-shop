@@ -88,6 +88,9 @@ router.get('/login', (req, res, next) => {
     )
     .catch()
 })
+
+
+// for Admin
 router.delete('/:userId', checkAuth, (req, res) => {
     const id = req.params.userId
     User.remove({_id: id}).exec()

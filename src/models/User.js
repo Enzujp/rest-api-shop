@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-// const { isEmail } = require("validator"); //recall to install this
+const { isEmail } = require("validator"); //recall to install this
 
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
@@ -8,7 +8,8 @@ const userSchema = mongoose.Schema({
         required: [true, "Please enter an Email"],
         lowercase: true,
         unique: true,
-        // validate: [isEmail, "Please enter a Valid Email"]
+        validate: [isEmail, "Please enter a Valid Email"]
+        
         // install validator for email checks
     },
     password: {
