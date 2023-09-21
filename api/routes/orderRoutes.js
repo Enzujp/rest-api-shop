@@ -4,7 +4,7 @@ const router = express.Router();
 const multer = require("multer")
 
 const Order = require("../../src/models/order");
-const Product = require("../../src/models/productRoutes");
+const Product = require("../../src/models/product");
 const order = require("../../src/models/order");
 
 const checkAuth = require("../../middlewares/check-auth");

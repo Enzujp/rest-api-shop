@@ -1,4 +1,4 @@
-const Order = require("../src/models/orderRoutes");
+const Order = require("../src/models/order");
 
 
 module.exports.all_orders_get = (req, res) =>{

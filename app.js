@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");   
 
-const productRoutes = require("./api/routes/products");
-const orderRoutes = require("./api/routes/orders");
-const userRoutes = require("./api/routes/userRoutes")
+const productRoutes = require("./api/routes/productRoutes");
+const orderRoutes = require("./api/routes/orderRoutes");
+const userRoutes = require("./api/routes/userRoutes");
 
 const app = express();
 
@@ -56,8 +56,8 @@ app.use((error, req, res, next) => {
 app.listen(7000, ()=> console.log("This works"));
 
 
-app.get('/', (req, res)=> {
-    res.status(200).json({
-        message: "This works boo thang"
-    });
-})
+// app.get('/', (req, res)=> {
+//     res.status(200).json({
+//         message: "This works boo thang"
+//     });
+// })
