@@ -1,2 +1,1 @@
- rest-api-shop
- API for an Ecommerce
+Backend API resource for an Ecommerce Website

@@ -56,9 +56,9 @@ router.post('/signup', (req, res, next) => {
 router.get('/login', (req, res, next) => {
     User.find({email: req.body.email}).exec() // returns an array instead of findOne
     .then(user => {
-        if (user.length >= 1) {
+        if (user.length <= 1) { // if a user exists with said email
             return res.status(401).json({
-                message: 'Auth Failed'
+                message: 'User with this email doesnt exist'
             });
         }
         bcrypt.compare(req.body.password, user[0].password, (err, result) => {
