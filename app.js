@@ -9,8 +9,8 @@ const userRoutes = require("./api/routes/userRoutes");
 
 const app = express();
 const bodyParser = require("body-parser");
-
-dotenv.config();
+// Initialize dotenv for use
+require("dotenv").config();
 
 // set port
 const PORT = process.env.PORT || 7000
