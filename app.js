@@ -8,9 +8,12 @@ const orderRoutes = require("./api/routes/orderRoutes");
 const userRoutes = require("./api/routes/userRoutes");
 
 const app = express();
-
 const bodyParser = require("body-parser");
 
+dotenv.config();
+
+// set port
+const PORT = process.env.PORT || 7000
 
 // Middleware
 app.use(cors());
@@ -53,7 +56,7 @@ app.use((error, req, res) => {
 
 
 // listen for server
-app.listen(7000, ()=> console.log("This works"));
+app.listen(PORT, ()=> console.log(`This works! Runs on port ${PORT}`));
 
 
 // app.get('/', (req, res)=> {
