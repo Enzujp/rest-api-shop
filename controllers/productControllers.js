@@ -163,7 +163,7 @@ module.exports.product_patch = (req, res) => {
 // Delete Product
 module.exports.product_delete = (req, res) => {
     const id = req.params.productId;
-    Product.remove({ 
+    Product.remove  ({ 
         _id: id // remove _id property from database with value of id
      }).exec()
      .then(result => {

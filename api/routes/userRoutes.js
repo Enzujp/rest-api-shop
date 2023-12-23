@@ -86,7 +86,11 @@ router.get('/login', (req, res, next) => {
         })
         }
     )
-    .catch()
+    .catch(err => {
+        res.status(500).json({
+            err: err
+        })
+    })
 })
 
 
